@@ -41,6 +41,13 @@ const Page = () => {
       icon: <FileCode size={32} />,
       status: 'OK',
     },
+    {
+      name: 'AGL Bill Helper',
+      link: '/agl_bill_helper',
+      color: 'bg-emerald-500',
+      icon: <FileCode size={32} />,
+      status: 'OK',
+    },
   ];
 
   return (
