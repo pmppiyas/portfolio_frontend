@@ -19,12 +19,10 @@ function Banner() {
       id="home"
       className="relative min-h-screen w-full overflow-hidden flex items-center justify-center py-8 bg-black"
     >
-      {/* Stars - Opacity Restored to Bright (100% or 0.8) */}
       <div className="absolute inset-0 z-0 opacity-80">
         <StarfieldWarp />
       </div>
 
-      {/* Background Orbs - Kept Subtle for Text Readability */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-cyan-900/10 rounded-full blur-[120px] animate-float" />
         <div className="absolute bottom-1/3 -right-1/4 w-96 h-96 bg-purple-900/10 rounded-full blur-[120px] animate-float" />

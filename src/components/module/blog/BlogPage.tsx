@@ -1,6 +1,6 @@
 import { techBlogsDemo } from '@/assets/assets';
 import { BlogCard } from '@/components/module/blog/BlogCard';
-import { CustomHeading } from '@/components/module/shared/Heading';
+import CustomHeading from '@/components/module/shared/Heading';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

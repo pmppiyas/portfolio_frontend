@@ -1,10 +1,26 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 const CenterSparks = () => {
   return (
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <style>{`
+        @keyframes sparkOuter {
+          0% { opacity: 0; }
+          50% { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        @keyframes sparkInner {
+          0% { transform: translate(0, 0) scale(0); }
+          50% { transform: translate(var(--tx), var(--ty)) scale(1.4); }
+          100% { transform: translate(var(--tx), var(--ty)) scale(0.6); }
+        }
+        .spark-container {
+          animation: sparkOuter 3.2s infinite ease-out;
+        }
+        .spark-inner {
+          animation: sparkInner 3s infinite ease-out;
+        }
+      `}</style>
       {Array.from({ length: 18 }).map((_, i) => {
         const angle = Math.random() * Math.PI * 2;
 
@@ -14,31 +30,20 @@ const CenterSparks = () => {
         const y = Math.sin(angle) * distance;
 
         return (
-          <motion.div
+          <div
             key={i}
-            className="absolute"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{
-              duration: 3.2,
-              delay: Math.random() * 4,
-              repeat: Infinity,
-              repeatDelay: Math.random() * 2,
-              ease: 'easeOut',
-            }}
+            className="absolute spark-container"
+            style={{
+              animationDelay: `${Math.random() * 4}s`,
+            } as React.CSSProperties}
           >
-            <motion.div
-              initial={{ x: 0, y: 0, scale: 0 }}
-              animate={{
-                x,
-                y,
-                scale: [0, 1.4, 0.6], // 🔥 BIG SCALE
-              }}
-              transition={{
-                duration: 3,
-                ease: 'easeOut',
-              }}
-              className="relative"
+            <div
+              className="relative spark-inner"
+              style={{
+                '--tx': `${x}px`,
+                '--ty': `${y}px`,
+                animationDelay: `${Math.random() * 4}s`,
+              } as React.CSSProperties}
             >
               {/* 🔥 COMET HEAD (BIG) */}
               <div className="w-4 h-4 rounded-full bg-cyan-400 shadow-[0_0_25px_rgba(34,211,238,1)]" />
@@ -55,8 +60,8 @@ const CenterSparks = () => {
               >
                 <div className="w-full h-full bg-linear-to-r from-cyan-400/90 via-cyan-400/40 to-transparent blur-sm" />
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         );
       })}
     </div>

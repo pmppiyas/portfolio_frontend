@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useInView } from '@/hooks/useInView';
 import {
   Twitter,
   Instagram,
@@ -54,28 +54,24 @@ export default function Footer() {
     },
   ];
 
+  const { ref: bioRef, inView: bioInView } = useInView({ threshold: 0.1 });
+  const { ref: linksRef, inView: linksInView } = useInView({ threshold: 0.1 });
+
   return (
     <footer className="relative bg-slate-950 text-white overflow-hidden border-t border-white/5">
       {/* Background Parallax Orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          className="absolute -top-24 left-1/4 w-72 h-72 bg-cyan-500/5 rounded-full blur-[120px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
+        <div
+          className="absolute -top-24 left-1/4 w-72 h-72 bg-cyan-500/5 rounded-full blur-[120px] animate-pulse"
         />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
           {/* Personal Bio Section */}
-          <motion.div
-            className="lg:col-span-2"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <div
+            ref={bioRef as any}
+            className={`lg:col-span-2 fade-in-up ${bioInView ? 'visible' : ''}`}
           >
             <Link href="/" className="inline-block mb-6">
               <h2 className="text-2xl font-bold tracking-tighter">
@@ -109,16 +105,15 @@ export default function Footer() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Dynamic Link Groups */}
           {Object.entries(footerLinks).map(([category, links], idx) => (
-            <motion.div
+            <div
               key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
+              ref={idx === 0 ? (linksRef as any) : null}
+              className={`fade-in-up ${linksInView ? 'visible' : ''}`}
+              style={{ animationDelay: `${idx * 0.1}s` }}
             >
               <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-500 mb-6">
                 {category}
@@ -138,7 +133,7 @@ export default function Footer() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </div>
 

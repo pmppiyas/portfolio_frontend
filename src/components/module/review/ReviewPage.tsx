@@ -3,11 +3,11 @@
 import * as React from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import assets from '@/assets/assets';
-import { CustomHeading } from '@/components/module/shared/Heading';
 import { cn, fadeInUp } from '@/lib/utils';
 import ReviewCard from '@/components/module/review/ReviewCard';
 import { IReview } from '@/types';
-import { motion } from 'framer-motion';
+import { useInView } from '@/hooks/useInView';
+import CustomHeading from '@/components/module/shared/Heading';
 
 const { myReviews }: { myReviews: IReview[] } = assets;
 
@@ -32,16 +32,15 @@ export default function ReviewPage() {
     emblaApi.on('select', onSelect);
   }, [emblaApi, onSelect]);
 
+  const { ref, inView } = useInView({ threshold: 0.1 });
+
   return (
     <div id="review" className="w-full px-4 md:px-8 ">
-      <div className="max-w-7xl mx-auto mt-4">
+      <div className="max-w-7xl mx-auto mt-4" ref={ref as any}>
         <CustomHeading heading="They Say" />
 
-        <motion.div
-          {...fadeInUp}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className=" overflow-hidden cursor-grab active:cursor-grabbing mt-8 select-none"
+        <div
+          className={`overflow-hidden cursor-grab active:cursor-grabbing mt-8 select-none fade-in-up ${inView ? 'visible' : ''}`}
           ref={emblaRef}
         >
           <div className="flex -ml-4">
@@ -49,7 +48,7 @@ export default function ReviewPage() {
               <ReviewCard key={index} review={review} index={index} />
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Pagination Dots */}
         <div className="flex justify-center gap-2 mt-8">

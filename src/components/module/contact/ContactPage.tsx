@@ -2,20 +2,10 @@
 'use client';
 
 import SocialButton from '@/components/ActionButton/SocialButton';
-import { CustomHeading } from '@/components/module/shared/Heading';
 import { Clock, Mail, MapPin, Phone } from 'lucide-react';
 import { useState } from 'react';
-import { motion, easeInOut } from 'framer-motion';
-import { fadeInUp } from '@/lib/utils';
-
-const itemVariants = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.5, ease: easeInOut },
-  },
-};
+import { useInView } from '@/hooks/useInView';
+import CustomHeading from '@/components/module/shared/Heading';
 
 function ContactPage() {
   const [formData, setFormData] = useState({
@@ -42,6 +32,9 @@ function ContactPage() {
     setTimeout(() => setSubmitStatus(null), 5000);
   };
 
+  const { ref: leftRef, inView: leftInView } = useInView({ threshold: 0.1 });
+  const { ref: rightRef, inView: rightInView } = useInView({ threshold: 0.1 });
+
   return (
     <div
       id="contact"
@@ -55,24 +48,17 @@ function ContactPage() {
 
       <div className="flex flex-col md:flex-row gap-6 md:gap-12 mt-16 w-full max-w-7xl mx-auto z-10">
         {/* Left Side: Contact Form with Upward Parallax */}
-        <motion.div
-          {...fadeInUp}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="flex flex-col w-full flex-1 bg-gray-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/5 shadow-2xl"
+        <div
+          ref={leftRef as any}
+          className={`flex flex-col w-full flex-1 bg-gray-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/5 shadow-2xl fade-in-up ${leftInView ? 'visible' : ''}`}
         >
-          <motion.h2 className="text-3xl font-bold text-foreground mb-2">
+          <h2 className="text-3xl font-bold text-foreground mb-2">
             Just say Hello
-          </motion.h2>
+          </h2>
           <p className="text-gray-400 mb-6">Feel free to drop a message!</p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-            >
+            <div>
               <input
                 type="text"
                 name="name"
@@ -81,15 +67,9 @@ function ContactPage() {
                 className="w-full p-4 rounded-xl bg-gray-800/50 text-white border border-gray-700 focus:border-cyan-400
                 focus:border-2 focus:outline-none transition-all"
               />
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-            >
+            <div>
               <input
                 type="email"
                 name="email"
@@ -98,15 +78,9 @@ function ContactPage() {
                 className="w-full p-4 rounded-xl bg-gray-800/50 text-white border border-gray-700 focus:border-cyan-400
                 focus:border-2 focus:outline-none transition-all"
               />
-            </motion.div>
+            </div>
 
-            <motion.div
-              variants={itemVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
+            <div>
               <textarea
                 rows={5}
                 name="message"
@@ -115,44 +89,31 @@ function ContactPage() {
                 className="w-full p-4 rounded-xl bg-gray-800/50 text-white border border-gray-700 focus:border-cyan-400
                 focus:border-2 focus:outline-none transition-all"
               />
-            </motion.div>
+            </div>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+            <button
               disabled={isSubmitting}
-              className="bg-cyan-500  text-background font-semibold py-4 rounded-xl transition-all shadow-lg shadow-blue-600/20"
+              className="bg-cyan-500 text-background font-semibold py-4 rounded-xl transition-all shadow-lg shadow-blue-600/20 hover:scale-102 active:scale-98"
             >
               {isSubmitting ? 'Sending...' : 'Send Message'}
-            </motion.button>
+            </button>
 
             {submitStatus === 'success' && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-green-400 text-center"
-              >
+              <p className="text-green-400 text-center animate-pulse">
                 ✓ Message sent successfully!
-              </motion.p>
+              </p>
             )}
           </form>
-        </motion.div>
+        </div>
 
         {/* Right Side: Info with Downward Parallax */}
-        <motion.div
-          {...fadeInUp}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: 'easeOut' }}
-          className="flex flex-col items-start bg-gray-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/5 shadow-2xl w-full flex-1"
+        <div
+          ref={rightRef as any}
+          className={`flex flex-col items-start bg-gray-900/40 backdrop-blur-md p-8 rounded-3xl border border-white/5 shadow-2xl w-full flex-1 fade-in-up ${rightInView ? 'visible' : ''}`}
         >
-          <motion.h2
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl font-bold text-foreground mb-8"
-          >
+          <h2 className="text-3xl font-bold text-foreground mb-8">
             Contact Info
-          </motion.h2>
+          </h2>
 
           <div className="w-full space-y-6">
             {[
@@ -175,13 +136,10 @@ function ContactPage() {
               },
               { icon: Clock, label: 'Hours', val: 'Sat - Thu: 9AM - 5PM' },
             ].map((item, i) => (
-              <motion.div
+              <div
                 key={i}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="flex items-center gap-5 group"
+                className={`flex items-center gap-5 group fade-in-up ${rightInView ? 'visible' : ''}`}
+                style={{ animationDelay: `${i * 0.1}s` }}
               >
                 <div className="p-4 bg-blue-600/10 rounded-2xl group-hover:bg-cyan-500 group-hover:text-foreground transition-all duration-300">
                   <item.icon className="w-6 h-6 text-cyan-500 group-hover:text-background" />
@@ -194,20 +152,14 @@ function ContactPage() {
                     {item.val}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             ))}
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: 'easeOut' }}
-              className=" flex items-center justify-center md:justify-start pb-8"
-            >
+            <div className="flex items-center justify-center md:justify-start pb-8">
               <SocialButton />
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

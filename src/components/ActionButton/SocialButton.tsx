@@ -1,5 +1,5 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useInView } from '@/hooks/useInView';
 import {
   FaFacebookSquare,
   FaGithub,
@@ -42,34 +42,22 @@ function SocialButton() {
     },
   ];
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 },
-    },
-  };
-
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 },
-  };
+  const { ref, inView } = useInView({ threshold: 0.1 });
 
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="flex items-center gap-4 py-4"
+    <div
+      ref={ref as any}
+      className={`flex items-center gap-4 py-4 fade-in-up ${inView ? 'visible' : ''}`}
     >
       {socials.map((social, index) => (
-        <motion.a
+        <a
           key={index}
           href={social.link}
           target="_blank"
           rel="noopener noreferrer"
-          variants={item}
+          style={{ animationDelay: `${index * 0.1}s` }}
           className={`
+            fade-in-up ${inView ? 'visible' : ''}
             relative p-3 rounded-xl border border-white/10 bg-white/5
             text-white/60 transition-all duration-300
             ${social.color} hover:bg-white/10 hover:border-white/20
@@ -79,9 +67,9 @@ function SocialButton() {
           `}
         >
           <span className="relative z-10">{social.icon}</span>
-        </motion.a>
+        </a>
       ))}
-    </motion.div>
+    </div>
   );
 }
 

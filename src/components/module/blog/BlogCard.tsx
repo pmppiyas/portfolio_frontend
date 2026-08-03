@@ -6,60 +6,19 @@ import Link from 'next/link';
 import { BiLike } from 'react-icons/bi';
 import { BsEye, BsThreeDotsVertical } from 'react-icons/bs';
 import { IoMdShareAlt } from 'react-icons/io';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useInView } from '@/hooks/useInView';
 
 export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const mouseXSpring = useSpring(x);
-  const mouseYSpring = useSpring(y);
-
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['7deg', '-7deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-7deg', '7deg']);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const xPct = mouseX / width - 0.5;
-    const yPct = mouseY / height - 0.5;
-
-    x.set(xPct);
-    y.set(yPct);
-  };
-
-  const handleMouseLeave = () => {
-    x.set(0);
-    y.set(0);
-  };
+  const { ref, inView } = useInView({ threshold: 0.1 });
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      style={{ perspective: '1000px' }}
+    <div
+      ref={ref as any}
+      className={`fade-in-up ${inView ? 'visible' : ''}`}
     >
       <Link href={`/blogs/${id}`}>
-        <motion.div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={handleMouseLeave}
-          style={{
-            rotateX,
-            rotateY,
-            transformStyle: 'preserve-3d',
-          }}
-          className="w-full shadow-lg dark:bg-slate-800/50 bg-white rounded-xl overflow-hidden flex flex-col border border-transparent hover:border-cyan-500/30 transition-colors duration-500 group relative"
+        <div
+          className="w-full shadow-lg dark:bg-slate-800/50 bg-white rounded-xl overflow-hidden flex flex-col border border-transparent hover:border-cyan-500/30 transition-all duration-500 hover:-translate-y-2 group relative"
         >
           {/* Image Section with Overlap effect */}
           <div
@@ -100,12 +59,9 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
               >
                 <span className="text-cyan-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
                   See More
-                  <motion.span
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                  >
+                  <span className="group-hover:translate-x-1 transition-transform inline-block">
                     →
-                  </motion.span>
+                  </span>
                 </span>
               </div>
 
@@ -137,8 +93,8 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
 
           {/* Hover Glow Effect */}
           <div className="absolute inset-0 bg-linear-to-br from-cyan-500/5 via-transparent to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-        </motion.div>
+        </div>
       </Link>
-    </motion.div>
+    </div>
   );
 };

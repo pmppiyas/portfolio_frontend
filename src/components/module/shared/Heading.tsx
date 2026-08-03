@@ -1,24 +1,26 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useInView } from '@/hooks/useInView';
 
 interface CustomHeadingProps {
   heading: string;
 }
 
-export const CustomHeading = ({ heading }: CustomHeadingProps) => {
+const CustomHeading = ({ heading }: CustomHeadingProps) => {
+  const { ref, inView } = useInView({ threshold: 0.1 });
   return (
-    <div className="relative flex items-center justify-center  overflow-hidden ">
-      {/* Background Large Text - Animated Fade In */}
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: 'easeOut' }}
-        viewport={{ once: true }}
-        className="text-[60px] md:text-[90px] lg:text-[140px] font-black text-center text-muted-foreground uppercase tracking-tighter select-none"
+    <div
+      className="relative flex items-center justify-center  overflow-hidden "
+      ref={ref as any}
+    >
+      <h1
+        className={`text-[60px] md:text-[90px] lg:text-[140px] font-black text-center text-muted-foreground uppercase tracking-tighter select-none fade-in-up ${inView ? 'visible' : ''}`}
+        style={{ animationDuration: '1s' }}
       >
         {heading}
-      </motion.h1>
+      </h1>
     </div>
   );
 };
+
+export default CustomHeading;

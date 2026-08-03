@@ -4,7 +4,7 @@ import { Download, Menu, X, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,7 +33,11 @@ function Navbar() {
   const [activePath, setActivePath] = useState(pathname);
 
   useEffect(() => {
-    setActivePath(window.location.pathname + window.location.hash);
+    // Sync activePath with current route on every navigation
+    setActivePath(pathname + window.location.hash);
+
+    // Section scroll detection only runs on the home page
+    if (pathname !== '/') return;
 
     const sectionMap: { id: string; navLink: string | null }[] = [
       { id: 'home', navLink: '/' },
@@ -63,6 +67,7 @@ function Navbar() {
       } else if (active.navLink !== null) {
         setActivePath(active.navLink);
       }
+      // navLink === null (skills/review) → freeze, don't update
     };
 
     getActiveSection();
@@ -74,7 +79,8 @@ function Navbar() {
       window.removeEventListener('scroll', getActiveSection);
       window.removeEventListener('hashchange', getActiveSection);
     };
-  }, []);
+  }, [pathname]);
+
 
   const links = [
     { name: 'Home', link: '/' },
@@ -123,8 +129,13 @@ function Navbar() {
                   key={idx}
                   href={link.link}
                   onClick={(e) => {
-                    // Smooth scroll for hash links on the same page
-                    if (link.link.startsWith('/#')) {
+                    if (link.link === '/' && pathname === '/') {
+                      // Same page — scroll to top smoothly
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      setActivePath('/');
+                    } else if (link.link.startsWith('/#')) {
+                      // Hash section — smooth scroll
                       const id = link.link.replace('/#', '');
                       const el = document.getElementById(id);
                       if (el) {
@@ -146,15 +157,7 @@ function Navbar() {
                   {link.name}
 
                   {isActive && (
-                    <motion.div
-                      layoutId="activeNav"
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 rounded-full mx-4"
-                      transition={{
-                        type: 'spring',
-                        stiffness: 380,
-                        damping: 30,
-                      }}
-                    />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-400 rounded-full mx-4 transition-all duration-300" />
                   )}
                 </Link>
               );
@@ -247,8 +250,13 @@ function Navbar() {
                   key={idx}
                   href={link.link}
                   onClick={(e) => {
-                    // Smooth scroll for hash links on mobile too
-                    if (link.link.startsWith('/#')) {
+                    if (link.link === '/' && pathname === '/') {
+                      // Same page — scroll to top smoothly
+                      e.preventDefault();
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      setActivePath('/');
+                    } else if (link.link.startsWith('/#')) {
+                      // Hash section — smooth scroll
                       const id = link.link.replace('/#', '');
                       const el = document.getElementById(id);
                       if (el) {

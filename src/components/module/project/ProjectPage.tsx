@@ -4,10 +4,10 @@ import assets from '@/assets/assets';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CustomHeading } from '../shared/Heading';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { fadeInUp } from '@/lib/utils';
+import CustomHeading from '@/components/module/shared/Heading';
 
 const { myWorks } = assets;
 

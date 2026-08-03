@@ -1,5 +1,5 @@
-import ModernHeading from '@/components/module/shared/ModernHeading';
-import { Wallet, Image, Shapes, FileCode } from 'lucide-react';
+import CustomHeading from '@/components/module/shared/Heading';
+import { Wallet, FileCode } from 'lucide-react';
 import Link from 'next/link';
 
 const Page = () => {
@@ -51,12 +51,8 @@ const Page = () => {
   ];
 
   return (
-    <div className="mt-20 min-h-screen px-4">
-      <ModernHeading
-        label="Dashboard"
-        head="Essential Tools"
-        paragraph="Collection of useful generators, converters and developer utilities."
-      />
+    <div className="mt-10 min-h-screen px-4">
+      <CustomHeading heading="Essential Tools" />
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {tools.map((tool) => (
