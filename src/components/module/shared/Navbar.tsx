@@ -110,7 +110,13 @@ function Navbar() {
 
           <nav className="hidden lg:flex items-center gap-1">
             {links.map((link, idx) => {
-              const isActive = activePath === link.link;
+              const isActive =
+                link.link === '/'
+                  ? activePath === '/'
+                  : link.link.startsWith('/#')
+                    ? activePath === link.link
+                    : activePath === link.link ||
+                      activePath.startsWith(link.link + '/');
 
               return (
                 <Link
@@ -228,7 +234,13 @@ function Navbar() {
 
           <nav className="flex flex-col gap-2">
             {links.map((link, idx) => {
-              const isActive = pathname === link.link;
+              const isActive =
+                link.link === '/'
+                  ? pathname === '/'
+                  : link.link.startsWith('/#')
+                    ? activePath === link.link
+                    : pathname === link.link ||
+                      pathname.startsWith(link.link + '/');
 
               return (
                 <Link
