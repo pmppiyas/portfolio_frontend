@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Copy, Check } from 'lucide-react'; // আইকনের জন্য
+import { Copy, Check } from 'lucide-react';
 
 interface BillData {
   price: number;
@@ -43,13 +43,15 @@ export default function BillGenerator() {
       total,
       totalDue,
     });
-    setCopied(false); // নতুন বিল জেনারেট হলে কপির স্ট্যাটাস রিসেট হবে
+    setCopied(false);
+    setPrice('');
+    setAdvance('');
+    setDelivery('');
   };
 
   const handleCopy = () => {
     if (!bill) return;
 
-    // কপি করার জন্য সুন্দর করে টেক্সট ফরম্যাট করা হয়েছে
     const textToCopy = `পণ্যের দাম (Product Price): ${bill.price} টাকা
 অগ্রিম প্রদান (Advance): - ${bill.advance} টাকা
 কন্ডিশন চার্জ (Condition Charge): ${bill.conditionCharge} টাকা
@@ -60,7 +62,6 @@ export default function BillGenerator() {
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
 
-    // ২ সেকেন্ড পর আবার আগের আইকন দেখাবে
     setTimeout(() => {
       setCopied(false);
     }, 2000);
@@ -68,7 +69,7 @@ export default function BillGenerator() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-background p-4 md:p-8">
-      {/* মেইন কন্টেইনার - বড় স্ক্রিনে ২ কলাম, মোবাইলে ১ কলাম */}
+      {/* মেইন কন্টেইনার - বড় স্ক্রিনে ২ কলাম, মোবাইলে ১ কলাম */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
         {/* Left Side: Inputs */}
         <Card className="shadow-lg border-muted">
@@ -192,7 +193,7 @@ export default function BillGenerator() {
               </div>
             ) : (
               <div className="flex h-40 items-center justify-center text-muted-foreground text-sm">
-                বাম পাশে তথ্য দিয়ে "Generate Bill" এ ক্লিক করুন
+                বাম পাশে তথ্য দিয়ে "Generate Bill" এ ক্লিক করুন
               </div>
             )}
           </CardContent>

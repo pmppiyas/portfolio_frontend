@@ -16,7 +16,7 @@ function ProjectPage() {
 
   return (
     <div
-      id="portfolio"
+      id="projects"
       className="relative w-full py-12 px-4 sm:px-6 lg:px-8  overflow-hidden mt-5 md:mt-0"
     >
       <div className="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl -z-10" />

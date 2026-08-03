@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 import { Button } from '@/components/ui/button';
 import { Download, Menu, X, UserCheck } from 'lucide-react';
@@ -31,14 +30,60 @@ function Navbar() {
     };
   }, [isMenuOpen]);
 
+  const [activePath, setActivePath] = useState(pathname);
+
+  useEffect(() => {
+    setActivePath(window.location.pathname + window.location.hash);
+
+    const sectionMap: { id: string; navLink: string | null }[] = [
+      { id: 'home', navLink: '/' },
+      { id: 'about', navLink: '/#about' },
+      { id: 'service', navLink: '/#service' },
+      { id: 'skills', navLink: null },
+      { id: 'projects', navLink: '/#projects' },
+      { id: 'review', navLink: null },
+      { id: 'contact', navLink: '/#contact' },
+    ];
+
+    const getActiveSection = () => {
+      const triggerY = window.innerHeight * 0.35;
+      let active: { id: string; navLink: string | null } | null = null;
+
+      for (const section of sectionMap) {
+        const el = document.getElementById(section.id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= triggerY) {
+          active = section;
+        }
+      }
+
+      if (!active) {
+        setActivePath('/');
+      } else if (active.navLink !== null) {
+        setActivePath(active.navLink);
+      }
+    };
+
+    getActiveSection();
+
+    window.addEventListener('scroll', getActiveSection, { passive: true });
+    window.addEventListener('hashchange', getActiveSection);
+
+    return () => {
+      window.removeEventListener('scroll', getActiveSection);
+      window.removeEventListener('hashchange', getActiveSection);
+    };
+  }, []);
+
   const links = [
     { name: 'Home', link: '/' },
-    { name: 'About', link: '/about' },
-    { name: 'Service', link: '/service' },
-    { name: 'Projects', link: '/projects' },
+    { name: 'About', link: '/#about' },
+    { name: 'Service', link: '/#service' },
+    { name: 'Projects', link: '/#projects' },
     { name: 'Blogs', link: '/blogs' },
     { name: 'Tools', link: '/tools' },
-    { name: 'Contact', link: '/contact' },
+    { name: 'Contact', link: '/#contact' },
   ];
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -65,22 +110,35 @@ function Navbar() {
 
           <nav className="hidden lg:flex items-center gap-1">
             {links.map((link, idx) => {
-              // চেক করছি এই লিঙ্কটি কি বর্তমানে একটিভ?
-              const isActive = pathname === link.link;
+              const isActive = activePath === link.link;
 
               return (
                 <Link
                   key={idx}
                   href={link.link}
+                  onClick={(e) => {
+                    // Smooth scroll for hash links on the same page
+                    if (link.link.startsWith('/#')) {
+                      const id = link.link.replace('/#', '');
+                      const el = document.getElementById(id);
+                      if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: 'smooth' });
+                        window.history.pushState(null, '', link.link);
+                        setActivePath(link.link);
+                      }
+                    } else {
+                      setActivePath(link.link);
+                    }
+                  }}
                   className={`relative text-base font-medium px-4 py-2 transition-all duration-300 ${
                     isActive
-                      ? 'text-cyan-400' // একটিভ থাকলে সায়ান কালার
+                      ? 'text-cyan-400'
                       : 'text-white/80 hover:text-cyan-400'
                   }`}
                 >
                   {link.name}
 
-                  {/* একটিভ লিঙ্কের নিচে একটি আন্ডারলাইন এনিমেশন (Optional কিন্তু দেখতে সুন্দর লাগে) */}
                   {isActive && (
                     <motion.div
                       layoutId="activeNav"
@@ -176,7 +234,22 @@ function Navbar() {
                 <Link
                   key={idx}
                   href={link.link}
-                  onClick={closeMenu}
+                  onClick={(e) => {
+                    // Smooth scroll for hash links on mobile too
+                    if (link.link.startsWith('/#')) {
+                      const id = link.link.replace('/#', '');
+                      const el = document.getElementById(id);
+                      if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: 'smooth' });
+                        window.history.pushState(null, '', link.link);
+                        setActivePath(link.link);
+                      }
+                    } else {
+                      setActivePath(link.link);
+                    }
+                    closeMenu();
+                  }}
                   className={`w-full text-left px-4 py-2 text-lg font-medium rounded-lg border-b border-white/5 transition-all ${
                     isActive
                       ? 'bg-cyan-400/10 text-cyan-400' // মোবাইল মেনুতে একটিভ ব্যাকগ্রাউন্ড

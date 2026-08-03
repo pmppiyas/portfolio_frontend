@@ -33,7 +33,7 @@ export default function ReviewPage() {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="w-full px-4 md:px-8 ">
+    <div id="review" className="w-full px-4 md:px-8 ">
       <div className="max-w-7xl mx-auto mt-4">
         <CustomHeading heading="They Say" />
 

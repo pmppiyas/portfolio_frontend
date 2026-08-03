@@ -10,7 +10,6 @@ import RotatingText from '@/components/module/home/RotatingText';
 
 function AboutPage() {
   const details = [
-    { label: 'Birthday', value: 'July 13, 2002', icon: <Calendar size={16} /> },
     {
       label: 'Phone',
       value: '+8801777233703',
@@ -44,7 +43,7 @@ function AboutPage() {
                 alt="Prince Mahmud Piyas"
                 src={myPhoto}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
                 priority
               />
             </div>
