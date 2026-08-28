@@ -137,6 +137,7 @@
 }
 .fade-in-up.visible {
   animation: fadeInUp 0.7s ease-out forwards;
+  will-change: opacity, transform;
 }
 .in-view {
   animation-play-state: running;

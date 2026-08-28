@@ -1,5 +1,5 @@
 import { Toaster } from '@/components/ui/sonner';
-import { React } from 'next/dist/server/route-modules/app-page/vendored/rsc/entrypoints';
+import React from 'react';
 
 export default function CommonLayout({
   children,

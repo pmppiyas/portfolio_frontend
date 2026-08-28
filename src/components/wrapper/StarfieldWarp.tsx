@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect, useState, ReactNode } from 'react';
+import { useRef, useEffect, ReactNode } from 'react';
 
 interface Star {
   x: number;
@@ -8,16 +8,6 @@ interface Star {
   z: number;
   size: number;
   color: string;
-}
-
-interface MousePosition {
-  x: number;
-  y: number;
-}
-
-interface Dimensions {
-  width: number;
-  height: number;
 }
 
 interface StarfieldWarpProps {
@@ -33,46 +23,26 @@ const StarfieldWarp: React.FC<StarfieldWarpProps> = ({
 }) => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [mousePosition, setMousePosition] = useState<MousePosition>({
-    x: 0,
-    y: 0,
-  });
-  const [dimensions, setDimensions] = useState<Dimensions>({
+  const mousePositionRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const dimensionsRef = useRef<{ width: number; height: number }>({
     width: 0,
     height: 0,
   });
   const starsRef = useRef<Star[]>([]);
   const warpSpeedRef = useRef<number>(0);
   const animationRef = useRef<number | null>(null);
+  const isVisibleRef = useRef<boolean>(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const wrapper = wrapperRef.current;
+    if (!canvas || !wrapper) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: false });
     if (!ctx) return;
 
-    const handleResize = () => {
-      if (!wrapperRef.current) return;
-
-      const rect = wrapperRef.current.getBoundingClientRect();
-      const { width, height } = rect;
-      const devicePixelRatio = window.devicePixelRatio || 1;
-
-      canvas.width = width * devicePixelRatio;
-      canvas.height = height * devicePixelRatio;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
-
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.scale(devicePixelRatio, devicePixelRatio);
-
-      setDimensions({ width, height });
-      initStars(width, height);
-    };
-
     const initStars = (width: number, height: number) => {
-      const count = starCount || (width < 768 ? 300 : 500);
+      const count = starCount || (width < 768 ? 200 : 350);
       const stars: Star[] = [];
 
       for (let i = 0; i < count; i++) {
@@ -89,63 +59,92 @@ const StarfieldWarp: React.FC<StarfieldWarpProps> = ({
       warpSpeedRef.current = 0;
     };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (animationRef.current !== null) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [starCount]);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleResize = () => {
       if (!wrapperRef.current) return;
 
       const rect = wrapperRef.current.getBoundingClientRect();
-      setMousePosition({
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top,
-      });
+      const width = rect.width;
+      const height = rect.height;
+      if (width === 0 || height === 0) return;
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+
+      dimensionsRef.current = { width, height };
+      mousePositionRef.current = { x: width / 2, y: height / 2 };
+      initStars(width, height);
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    handleResize();
 
-  useEffect(() => {
-    if (!dimensions.width || !dimensions.height) return;
+    let resizeTimer: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(handleResize, 100);
+    };
+    window.addEventListener('resize', debouncedResize);
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!wrapperRef.current) return;
+      const rect = wrapperRef.current.getBoundingClientRect();
+      mousePositionRef.current.x = e.clientX - rect.left;
+      mousePositionRef.current.y = e.clientY - rect.top;
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // Pause animation when off-screen to save CPU/GPU
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisibleRef.current = entry.isIntersecting;
+        if (entry.isIntersecting && !animationRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(wrapper);
 
     const animate = () => {
-      ctx.fillStyle = 'rgba(10, 10, 20, 0.2)';
-      ctx.fillRect(0, 0, dimensions.width, dimensions.height);
+      if (!isVisibleRef.current) {
+        animationRef.current = null;
+        return;
+      }
+
+      const { width, height } = dimensionsRef.current;
+      if (width === 0 || height === 0) {
+        animationRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      ctx.fillStyle = 'rgba(10, 10, 20, 0.25)';
+      ctx.fillRect(0, 0, width, height);
 
       const stars = starsRef.current;
-      const centerX = dimensions.width / 2;
-      const centerY = dimensions.height / 2;
+      const centerX = width / 2;
+      const centerY = height / 2;
 
-      const dx = mousePosition.x - centerX;
-      const dy = mousePosition.y - centerY;
+      const dx = mousePositionRef.current.x - centerX;
+      const dy = mousePositionRef.current.y - centerY;
       const distance = Math.sqrt(dx * dx + dy * dy);
-      const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+      const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY) || 1;
 
-      const targetWarpSpeed = Math.min(1, distance / maxDistance) * 15;
+      const targetWarpSpeed = Math.min(1, distance / maxDistance) * 12;
       warpSpeedRef.current += (targetWarpSpeed - warpSpeedRef.current) * 0.05;
 
-      for (const star of stars) {
-        star.z -= warpSpeedRef.current;
+      for (let i = 0; i < stars.length; i++) {
+        const star = stars[i];
+        star.z -= warpSpeedRef.current + 0.5;
 
         if (star.z <= 0 || star.z > 1000) {
-          star.x = Math.random() * dimensions.width - centerX;
-          star.y = Math.random() * dimensions.height - centerY;
+          star.x = Math.random() * width - centerX;
+          star.y = Math.random() * height - centerY;
           star.z = 1000;
           star.size = Math.random() * 2 + 1;
         }
@@ -156,13 +155,13 @@ const StarfieldWarp: React.FC<StarfieldWarpProps> = ({
 
         if (
           projectedX < -10 ||
-          projectedX > dimensions.width + 10 ||
+          projectedX > width + 10 ||
           projectedY < -10 ||
-          projectedY > dimensions.height + 10
+          projectedY > height + 10
         )
           continue;
 
-        if (warpSpeedRef.current > 5 && star.z < 500) {
+        if (warpSpeedRef.current > 4 && star.z < 500) {
           const prevX =
             (star.x / (star.z + warpSpeedRef.current * 2)) * 500 + centerX;
           const prevY =
@@ -182,38 +181,22 @@ const StarfieldWarp: React.FC<StarfieldWarpProps> = ({
         }
       }
 
-      if (warpSpeedRef.current > 1) {
-        const gradient = ctx.createRadialGradient(
-          centerX,
-          centerY,
-          0,
-          centerX,
-          centerY,
-          100 * warpSpeedRef.current
-        );
-        gradient.addColorStop(
-          0,
-          `rgba(100, 200, 255, ${warpSpeedRef.current * 0.05})`
-        );
-        gradient.addColorStop(1, 'rgba(100, 200, 255, 0)');
-
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 100 * warpSpeedRef.current, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
       animationRef.current = requestAnimationFrame(animate);
     };
 
-    animate();
+    animationRef.current = requestAnimationFrame(animate);
 
     return () => {
+      clearTimeout(resizeTimer);
+      window.removeEventListener('resize', debouncedResize);
+      window.removeEventListener('mousemove', handleMouseMove);
+      observer.disconnect();
       if (animationRef.current !== null) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
-  }, [dimensions, mousePosition]);
+  }, [starCount]);
 
   return (
     <div

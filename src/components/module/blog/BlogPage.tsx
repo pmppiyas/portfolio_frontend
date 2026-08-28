@@ -9,16 +9,20 @@ export const metadata: Metadata = {
 };
 
 export default async function Blogs() {
-  // const response = await fetchBlog();
-  // const blogs: IBlog[] = response?.data;
-  // console.log(blogs);
   return (
-    <div className="relative w-full py-4  px-4 sm:px-6 lg:px-8 overflow-hidden mt-5 md:mt-0">
-      <CustomHeading heading="All Blogs" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8  w-full lg:max-w-6xl  mx-auto  px-6">
-        {techBlogsDemo.map((blog, idx: number) => (
-          <BlogCard key={idx} {...blog} />
-        ))}
+    <div className="relative w-full min-h-screen pt-13  pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="max-w-6xl mx-auto space-y-8">
+        <CustomHeading
+          heading="All Blogs"
+          badge="SYS.DISPATCH // TECHNICAL_ARTICLES"
+          subtitle="Deep Dives into AI Systems, Distributed Architectures & Full-Stack Development"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+          {techBlogsDemo.map((blog, idx: number) => (
+            <BlogCard key={idx} {...blog} />
+          ))}
+        </div>
       </div>
     </div>
   );

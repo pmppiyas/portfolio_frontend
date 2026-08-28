@@ -28,10 +28,10 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
             <Image
               src="https://i.ibb.co.com/fV500sDk/download-2.jpg"
               alt={title}
-              height={150}
+              height={200}
               width={400}
-              layout="responsive"
-              className="group-hover:scale-110 transition-transform duration-700"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>

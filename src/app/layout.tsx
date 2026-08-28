@@ -1,8 +1,22 @@
 import Navbar from '@/components/module/shared/Navbar';
 import type { Metadata } from 'next';
-import { Kanit, Roboto } from 'next/font/google';
+import { Kanit, Roboto, Orbitron } from 'next/font/google';
 import './globals.css';
 import Footer from '@/components/module/shared/Footer';
+import fs from 'fs';
+import path from 'path';
+
+// Automatically synchronize public/favicon.ico to src/app/favicon.ico
+try {
+  const pubPath = path.join(process.cwd(), 'public', 'favicon.ico');
+  const appPath = path.join(process.cwd(), 'src', 'app', 'favicon.ico');
+  if (fs.existsSync(pubPath)) {
+    const pubBuf = fs.readFileSync(pubPath);
+    fs.writeFileSync(appPath, pubBuf);
+  }
+} catch {
+  // Pass in edge runtime if any
+}
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -16,9 +30,73 @@ const kanit = Kanit({
   weight: ['300', '400', '500', '600', '700', '800', '900'],
 });
 
+const orbitron = Orbitron({
+  variable: '--font-orbitron',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+});
+
 export const metadata: Metadata = {
-  title: 'Prince Mahmud Piyas',
-  description: 'Fullstack Web Developer & ERP Solutions Specialist',
+  metadataBase: new URL('https://princemahmudpiyas.com'),
+  title: {
+    default: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
+    template: '%s | Prince Mahmud Piyas',
+  },
+  description:
+    'Full-Stack AI Engineer & Distributed Systems Architect specializing in intelligent production architectures, high-performance web systems, and autonomous AI agents.',
+  keywords: [
+    'Prince Mahmud Piyas',
+    'Full-Stack Developer',
+    'AI Engineer',
+    'Distributed Systems',
+    'Next.js',
+    'React',
+    'TypeScript',
+    'Node.js',
+    'NestJS',
+    'PostgreSQL',
+    'Machine Learning',
+    'Software Engineer',
+    'Portfolio',
+  ],
+  authors: [
+    { name: 'Prince Mahmud Piyas', url: 'https://github.com/pmppiyas' },
+  ],
+  creator: 'Prince Mahmud Piyas',
+  icons: {
+    icon: [
+      { url: '/favicon.ico?v=piyas2', sizes: 'any' },
+    ],
+    shortcut: '/favicon.ico?v=piyas2',
+    apple: '/favicon.ico?v=piyas2',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://princemahmudpiyas.com',
+    siteName: 'Prince Mahmud Piyas - Engineering Portfolio',
+    title: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
+    description:
+      'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Prince Mahmud Piyas | Full-Stack AI Engineer',
+    description:
+      'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
+    creator: '@pmppiyas',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -29,7 +107,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${roboto.variable} ${kanit.variable} antialiased bg-background text-foreground min-h-screen `}
+        className={`${roboto.variable} ${kanit.variable} ${orbitron.variable} antialiased bg-background text-foreground min-h-screen `}
       >
         <Navbar />
 
