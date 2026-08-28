@@ -99,7 +99,6 @@ const StarfieldWarp: React.FC<StarfieldWarpProps> = ({
     };
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
-    // Pause animation when off-screen to save CPU/GPU
     const observer = new IntersectionObserver(
       ([entry]) => {
         isVisibleRef.current = entry.isIntersecting;

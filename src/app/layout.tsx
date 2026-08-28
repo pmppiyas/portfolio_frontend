@@ -6,7 +6,6 @@ import Footer from '@/components/module/shared/Footer';
 import fs from 'fs';
 import path from 'path';
 
-// Automatically synchronize public/favicon.ico to src/app/favicon.ico
 try {
   const pubPath = path.join(process.cwd(), 'public', 'favicon.ico');
   const appPath = path.join(process.cwd(), 'src', 'app', 'favicon.ico');
@@ -14,9 +13,13 @@ try {
     const pubBuf = fs.readFileSync(pubPath);
     fs.writeFileSync(appPath, pubBuf);
   }
-} catch {
-  // Pass in edge runtime if any
-}
+
+  const myPhotoPath = path.join(process.cwd(), 'src', 'assets', 'myphoto.png');
+  const ogDestPath = path.join(process.cwd(), 'public', 'og-image.png');
+  if (fs.existsSync(myPhotoPath)) {
+    fs.writeFileSync(ogDestPath, fs.readFileSync(myPhotoPath));
+  }
+} catch {}
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -37,7 +40,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://princemahmudpiyas.com'),
+  metadataBase: new URL('https://pmppiyas.vercel.app'),
   title: {
     default: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
     template: '%s | Prince Mahmud Piyas',
@@ -64,20 +67,26 @@ export const metadata: Metadata = {
   ],
   creator: 'Prince Mahmud Piyas',
   icons: {
-    icon: [
-      { url: '/favicon.ico?v=piyas2', sizes: 'any' },
-    ],
+    icon: [{ url: '/favicon.ico?v=piyas2', sizes: 'any' }],
     shortcut: '/favicon.ico?v=piyas2',
     apple: '/favicon.ico?v=piyas2',
   },
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://princemahmudpiyas.com',
+    url: 'https://pmppiyas.vercel.app',
     siteName: 'Prince Mahmud Piyas - Engineering Portfolio',
     title: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
     description:
       'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Prince Mahmud Piyas | Full-Stack AI Engineer',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -85,6 +94,7 @@ export const metadata: Metadata = {
     description:
       'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
     creator: '@pmppiyas',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
