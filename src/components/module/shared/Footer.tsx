@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useInView } from '@/hooks/useInView';
 import {
   Mail,
@@ -11,6 +12,8 @@ import {
   Radio,
   ExternalLink,
   ChevronRight,
+  Lock,
+  LogIn,
 } from 'lucide-react';
 import {
   FaGithub,
@@ -20,9 +23,20 @@ import {
   FaFacebookF,
 } from 'react-icons/fa6';
 import Link from 'next/link';
+import { getAuthCookie } from '@/utils/cookie';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    try {
+      const user = getAuthCookie();
+      if (user) {
+        setIsAdmin(true);
+      }
+    } catch {}
+  }, []);
 
   const footerLinks = {
     navigation: [
@@ -139,20 +153,48 @@ export default function Footer() {
             ref={bioRef as any}
             className={`lg:col-span-2 space-y-4 fade-in-up ${bioInView ? 'visible' : ''}`}
           >
-            <Link href="/" className="inline-flex items-center gap-2 group">
-              <span className="text-cyan-500/40 font-mono text-xl font-light">
-                [
-              </span>
-              <h2
-                className="text-xl sm:text-2xl font-black tracking-tight text-white group-hover:text-cyan-300 transition-colors"
-                style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}
+            <div className="flex items-center gap-3">
+              <Link href="/" className="inline-flex items-center gap-2 group">
+                <span className="text-cyan-500/40 font-mono text-xl font-light">
+                  [
+                </span>
+                <h2
+                  className="text-xl sm:text-2xl font-black tracking-tight text-white group-hover:text-cyan-300 transition-colors"
+                  style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}
+                >
+                  PRINCE<span className="text-cyan-400">.MAHMUD</span>
+                </h2>
+                <span className="text-cyan-500/40 font-mono text-xl font-light">
+                  ]
+                </span>
+              </Link>
+
+              {/* Admin Login Icon */}
+              <Link
+                href="/auth/login"
+                title={
+                  isAdmin ? 'Admin Console (Active Session)' : 'Admin Login'
+                }
+                aria-label={isAdmin ? 'Admin Console' : 'Admin Login'}
+                className={`p-1.5 rounded-lg border transition-all duration-200 group flex items-center justify-center ${
+                  isAdmin
+                    ? 'text-green-400 bg-green-500/10 border-green-500/30 hover:border-green-400 hover:bg-green-500/20 shadow-[0_0_10px_rgba(74,222,128,0.15)]'
+                    : 'text-gray-400 hover:text-cyan-300 hover:bg-cyan-500/10 border-white/10 hover:border-cyan-500/40 shadow-sm'
+                }`}
               >
-                PRINCE<span className="text-cyan-400">.MAHMUD</span>
-              </h2>
-              <span className="text-cyan-500/40 font-mono text-xl font-light">
-                ]
-              </span>
-            </Link>
+                {isAdmin ? (
+                  <ShieldCheck
+                    size={14}
+                    className="group-hover:scale-110 transition-transform text-green-400"
+                  />
+                ) : (
+                  <LogIn
+                    size={14}
+                    className="group-hover:translate-x-0.5 transition-transform"
+                  />
+                )}
+              </Link>
+            </div>
 
             <p className="text-gray-400 font-mono text-xs leading-relaxed max-w-sm">
               &gt; Full-Stack AI Engineer &amp; Distributed Systems Architect.

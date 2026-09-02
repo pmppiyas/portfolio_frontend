@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Kanit, Roboto, Orbitron } from 'next/font/google';
 import './globals.css';
 import Footer from '@/components/module/shared/Footer';
+import { Toaster } from '@/components/ui/sonner';
 import fs from 'fs';
 import path from 'path';
 
@@ -123,6 +124,7 @@ export default function RootLayout({
 
         <main className="relative w-full">{children}</main>
         <Footer />
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );
