@@ -1,10 +1,11 @@
 'use client';
 
 import assets from '@/assets/assets';
-import Image from 'next/image';
+import SafeImage from '@/components/ui/SafeImage';
 import Link from 'next/link';
 import CustomHeading from '@/components/module/shared/Heading';
 import { useInView } from '@/hooks/useInView';
+import { useGetAllPostsQuery } from '@/redux/features/post/postApi';
 import {
   ExternalLink,
   Github,
@@ -20,6 +21,25 @@ const { myWorks } = assets;
 
 function ProjectPage() {
   const { ref, inView } = useInView({ threshold: 0.1 });
+  const { data: dbPosts } = useGetAllPostsQuery({ isPublished: true });
+
+  const displayWorks =
+    dbPosts && dbPosts.length > 0
+      ? dbPosts.map((post) => ({
+          id: post.id,
+          name: post.title,
+          description: post.description,
+          photo:
+            post.thumbnail ||
+            'https://i.ibb.co.com/fV500sDk/download-2.jpg',
+          live: post.liveUrl || undefined,
+          github: post.githubUrl || undefined,
+          tags:
+            post.tags && post.tags.length > 0
+              ? post.tags
+              : ['Next.js', 'TypeScript', 'Prisma'],
+        }))
+      : myWorks;
 
   return (
     <section
@@ -62,7 +82,7 @@ function ProjectPage() {
 
         {/* Project Matrix Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {myWorks.map((work, idx) => {
+          {displayWorks.map((work, idx) => {
             const projectTags = work?.tags || [
               'Next.js',
               'TypeScript',
@@ -103,8 +123,8 @@ function ProjectPage() {
 
                   {/* Project Screenshot / Viewport */}
                   <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-gray-900 border-b border-white/5 cursor-pointer">
-                    <Image
-                      src={work?.photo}
+                    <SafeImage
+                      src={work?.photo as any}
                       alt={work?.name || 'Project'}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

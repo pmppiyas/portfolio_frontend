@@ -1,14 +1,14 @@
 'use client';
 import { Badge } from '@/components/ui/badge';
 import { IBlog } from '@/types';
-import Image from 'next/image';
+import SafeImage from '@/components/ui/SafeImage';
 import Link from 'next/link';
 import { BiLike } from 'react-icons/bi';
 import { BsEye, BsThreeDotsVertical } from 'react-icons/bs';
 import { IoMdShareAlt } from 'react-icons/io';
 import { useInView } from '@/hooks/useInView';
 
-export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
+export const BlogCard = ({ id, title, content, tags, views, thumbnail }: IBlog) => {
   const { ref, inView } = useInView({ threshold: 0.1 });
 
   return (
@@ -25,8 +25,8 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
             className="relative overflow-hidden"
             style={{ transform: 'translateZ(20px)' }}
           >
-            <Image
-              src="https://i.ibb.co.com/fV500sDk/download-2.jpg"
+            <SafeImage
+              src={thumbnail}
               alt={title}
               height={200}
               width={400}
@@ -48,7 +48,7 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
             </div>
 
             <div className="text-muted-foreground text-sm flex-1 mb-4 leading-relaxed">
-              {content.length > 110 ? `${content.slice(0, 110)}...` : content}
+              {content ? (content.length > 110 ? `${content.slice(0, 110)}...` : content) : ''}
             </div>
 
             <div className="mt-auto space-y-4">
@@ -68,7 +68,7 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
               <div className="flex justify-between items-center text-sm text-muted-foreground border-t border-white/5 pt-3">
                 <div className="flex gap-4">
                   <span className="flex items-center gap-1.5 group-hover:text-cyan-400/80 transition-colors">
-                    <BsEye /> {views}
+                    <BsEye /> {views ?? 0}
                   </span>
                   <span className="flex items-center gap-1.5 group-hover:text-pink-400/80 transition-colors">
                     <BiLike /> 10
@@ -78,7 +78,7 @@ export const BlogCard = ({ id, title, content, tags, views }: IBlog) => {
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {tags.map((tag, i) => (
+                {tags?.map((tag, i) => (
                   <Badge
                     key={i}
                     variant="secondary"
