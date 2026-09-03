@@ -1,8 +1,7 @@
-import Navbar from '@/components/module/shared/Navbar';
+import AppLayoutShell from '@/components/module/shared/AppLayoutShell';
 import type { Metadata } from 'next';
 import { Kanit, Roboto, Orbitron } from 'next/font/google';
 import './globals.css';
-import Footer from '@/components/module/shared/Footer';
 import { Toaster } from '@/components/ui/sonner';
 import ReduxProvider from '@/provider/ReduxProvider';
 import fs from 'fs';
@@ -122,9 +121,7 @@ export default function RootLayout({
         className={`${roboto.variable} ${kanit.variable} ${orbitron.variable} antialiased bg-background text-foreground min-h-screen `}
       >
         <ReduxProvider>
-          <Navbar />
-          <main className="relative w-full">{children}</main>
-          <Footer />
+          <AppLayoutShell>{children}</AppLayoutShell>
           <Toaster position="top-right" richColors />
         </ReduxProvider>
       </body>

@@ -23,9 +23,11 @@ import {
   FaFacebookF,
 } from 'react-icons/fa6';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { getAuthCookie } from '@/utils/cookie';
 
 export default function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
   const [isAdmin, setIsAdmin] = useState(false);
 
@@ -37,6 +39,19 @@ export default function Footer() {
       }
     } catch {}
   }, []);
+
+  const { ref: bioRef, inView: bioInView } = useInView({ threshold: 0.1 });
+  const { ref: linksRef, inView: linksInView } = useInView({ threshold: 0.1 });
+
+  // Hide public footer on admin dashboard and auth routes
+  const isDashboardOrAuth =
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/auth');
+
+  if (isDashboardOrAuth) {
+    return null;
+  }
 
   const footerLinks = {
     navigation: [
@@ -103,9 +118,6 @@ export default function Footer() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const { ref: bioRef, inView: bioInView } = useInView({ threshold: 0.1 });
-  const { ref: linksRef, inView: linksInView } = useInView({ threshold: 0.1 });
 
   return (
     <footer className="relative w-full pt-10 pb-0 px-4 sm:px-6 lg:px-8 bg-black text-white overflow-hidden border-t border-cyan-500/20">

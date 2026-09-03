@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 function Navbar() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const pathname = usePathname();
   const [activePath, setActivePath] = useState(pathname);
 
   useEffect(() => {
@@ -91,6 +91,16 @@ function Navbar() {
   ];
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  // Hide public navbar on admin dashboard and auth routes
+  const isDashboardOrAuth =
+    pathname?.startsWith('/admin') ||
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/auth');
+
+  if (isDashboardOrAuth) {
+    return null;
+  }
 
   return (
     <>

@@ -27,6 +27,8 @@ import {
   Sparkles,
   Filter,
   RefreshCw,
+  Server,
+  Code2,
 } from 'lucide-react';
 import {
   useGetAllPostsQuery,
@@ -429,16 +431,20 @@ export default function ProjectsView() {
                   {project.description}
                 </p>
 
-                {/* Tech Tags */}
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {project.tags?.slice(0, 3).map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="px-1.5 py-0.5 rounded bg-white/5 border border-white/5 text-[9px] text-gray-300"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
+                {/* Tech Tags - Show All */}
+                <div className="flex flex-wrap gap-1 pt-1 max-h-24 overflow-y-auto pr-0.5">
+                  {project.tags && project.tags.length > 0 ? (
+                    project.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="px-1.5 py-0.5 rounded bg-cyan-950/40 border border-cyan-500/20 text-[9px] text-cyan-300/90 font-mono uppercase"
+                      >
+                        #{tag}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-[9px] text-gray-500 font-mono">#NoTags</span>
+                  )}
                 </div>
               </CardContent>
 
@@ -462,10 +468,21 @@ export default function ProjectsView() {
                       href={project.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-purple-400 hover:bg-white/5 transition-colors"
-                      title="GitHub Source Code"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 transition-colors"
+                      title="Frontend GitHub Repository"
                     >
                       <Github size={13} />
+                    </a>
+                  )}
+                  {project.backendGithubUrl && (
+                    <a
+                      href={project.backendGithubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 transition-colors"
+                      title="Backend GitHub Repository"
+                    >
+                      <Server size={13} />
                     </a>
                   )}
                 </div>
