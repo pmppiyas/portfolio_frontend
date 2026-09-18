@@ -35,37 +35,41 @@ function Navbar() {
       { id: 'contact', navLink: '/#contact' },
     ];
 
-    let ticking = false;
+    let lastCheck = 0;
+    let timeoutId: NodeJS.Timeout | null = null;
 
     const handleScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 20;
-          setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+      const isScrolled = window.scrollY > 20;
+      setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
 
-          if (pathname === '/') {
-            const triggerY = window.innerHeight * 0.35;
-            let active: { id: string; navLink: string | null } | null = null;
+      if (pathname === '/') {
+        const now = Date.now();
+        if (now - lastCheck > 120) {
+          lastCheck = now;
+          const triggerY = window.innerHeight * 0.35;
+          let active: { id: string; navLink: string | null } | null = null;
 
-            for (let i = 0; i < sectionMap.length; i++) {
-              const el = document.getElementById(sectionMap[i].id);
-              if (!el) continue;
-              const rect = el.getBoundingClientRect();
-              if (rect.top <= triggerY) {
-                active = sectionMap[i];
-              }
-            }
-
-            if (!active) {
-              setActivePath((prev) => (prev !== '/' ? '/' : prev));
-            } else if (active.navLink !== null) {
-              const target = active.navLink;
-              setActivePath((prev) => (prev !== target ? target : prev));
+          for (let i = 0; i < sectionMap.length; i++) {
+            const el = document.getElementById(sectionMap[i].id);
+            if (!el) continue;
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= triggerY) {
+              active = sectionMap[i];
             }
           }
-          ticking = false;
-        });
-        ticking = true;
+
+          if (!active) {
+            setActivePath((prev) => (prev !== '/' ? '/' : prev));
+          } else if (active.navLink !== null) {
+            const target = active.navLink;
+            setActivePath((prev) => (prev !== target ? target : prev));
+          }
+        } else if (!timeoutId) {
+          timeoutId = setTimeout(() => {
+            timeoutId = null;
+            handleScroll();
+          }, 120);
+        }
       }
     };
 
@@ -75,6 +79,7 @@ function Navbar() {
     window.addEventListener('hashchange', handleScroll, { passive: true });
 
     return () => {
+      if (timeoutId) clearTimeout(timeoutId);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('hashchange', handleScroll);
     };
@@ -88,6 +93,7 @@ function Navbar() {
     { name: 'Blogs', link: '/blogs' },
     { name: 'Tools', link: '/tools' },
     { name: 'Contact', link: '/#contact' },
+    { name: 'ASK AI', link: '/assistant', isAi: true },
   ];
 
   const closeMenu = () => setIsMenuOpen(false);
@@ -139,14 +145,18 @@ function Navbar() {
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1.5 group">
-              <span className="text-cyan-400 font-mono text-base font-bold">[</span>
+              <span className="text-cyan-400 font-mono text-base font-bold">
+                [
+              </span>
               <span
                 className="text-lg sm:text-xl font-black tracking-tight text-white group-hover:text-cyan-300 transition-colors flex items-center gap-0.5"
                 style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}
               >
                 PRINCE<span className="text-cyan-400">.</span>
               </span>
-              <span className="text-cyan-400 font-mono text-base font-bold">]</span>
+              <span className="text-cyan-400 font-mono text-base font-bold">
+                ]
+              </span>
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse ml-0.5 hidden sm:inline-block" />
             </Link>
 
@@ -194,6 +204,11 @@ function Navbar() {
                       <span className="w-1 h-1 rounded-full bg-cyan-400 animate-ping mr-0.5" />
                     )}
                     <span>{link.name}</span>
+                    {link.isAi && (
+                      <span className="ml-0.5 px-1 py-0.2 text-[8px] tracking-normal font-mono bg-cyan-950 border border-cyan-400/50 text-cyan-300 rounded shadow-sm shadow-cyan-500/20">
+                        AI
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -248,7 +263,9 @@ function Navbar() {
       {/* Mobile Drawer (Polymorphic Frosted Glass) */}
       <div
         className={`lg:hidden fixed top-0 right-0 h-screen w-72 sm:w-80 bg-gray-950/95 backdrop-blur-2xl border-l border-cyan-500/30 shadow-2xl z-[100] transition-transform duration-300 ease-in-out font-mono flex flex-col ${
-          isMenuOpen ? 'translate-x-0 pointer-events-auto' : 'translate-x-full pointer-events-none'
+          isMenuOpen
+            ? 'translate-x-0 pointer-events-auto'
+            : 'translate-x-full pointer-events-none'
         }`}
       >
         <div className="p-6 flex flex-col h-full">
@@ -316,6 +333,11 @@ function Navbar() {
                   <span className="flex items-center gap-2">
                     <span className="text-cyan-500/50">&gt;</span>
                     <span>{link.name}</span>
+                    {link.isAi && (
+                      <span className="ml-1 px-1.5 py-0.5 text-[8px] font-mono bg-cyan-950 border border-cyan-400/50 text-cyan-300 rounded">
+                        RAG AI
+                      </span>
+                    )}
                   </span>
                   {isActive && (
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />

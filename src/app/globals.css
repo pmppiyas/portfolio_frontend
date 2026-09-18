@@ -97,7 +97,7 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html {
+  html[data-scroll-behavior='smooth'] {
     scroll-behavior: smooth;
   }
   body {
@@ -142,3 +142,28 @@
 .in-view {
   animation-play-state: running;
 }
+
+/* Global Custom Dark Scrollbar (Removes ugly native Windows white scrollbar) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-cyan);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+

@@ -26,9 +26,10 @@ function ProjectPage() {
   const isProjectsPage = pathname === '/projects';
   const { ref, inView } = useInView({ threshold: 0.1 });
   const { data: dbPosts } = useGetAllPostsQuery({ isPublished: true });
-  const [activeTooltipId, setActiveTooltipId] = useState<string | number | null>(null);
+  const [activeTooltipId, setActiveTooltipId] = useState<
+    string | number | null
+  >(null);
 
-  // Close tooltip when clicking outside
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -47,8 +48,7 @@ function ProjectPage() {
           name: post.title,
           description: post.description,
           photo:
-            post.thumbnail ||
-            'https://i.ibb.co.com/fV500sDk/download-2.jpg',
+            post.thumbnail || 'https://i.ibb.co.com/fV500sDk/download-2.jpg',
           live: post.liveUrl || undefined,
           github: post.githubUrl || undefined,
           backendGithub: post.backendGithubUrl || undefined,
@@ -160,6 +160,8 @@ function ProjectPage() {
                       src={work?.photo as any}
                       alt={work?.name || 'Project'}
                       fill
+                      priority={idx < 2}
+                      loading={idx < 2 ? 'eager' : 'lazy'}
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105 opacity-85 group-hover:opacity-100"
                     />
@@ -199,7 +201,9 @@ function ProjectPage() {
                     <div className="space-y-1 pt-1">
                       <div className="flex items-center justify-between text-[8px] text-gray-500 uppercase tracking-wider">
                         <span>// TECH_STACK</span>
-                        <span className="text-cyan-400/80">{projectTags.length} NODES</span>
+                        <span className="text-cyan-400/80">
+                          {projectTags.length} NODES
+                        </span>
                       </div>
                       <div className="flex flex-wrap gap-1.5 pt-0.5">
                         {projectTags.map((tag, i) => (
@@ -241,9 +245,7 @@ function ProjectPage() {
                           <button
                             type="button"
                             onClick={() =>
-                              setActiveTooltipId(
-                                isTooltipOpen ? null : work.id
-                              )
+                              setActiveTooltipId(isTooltipOpen ? null : work.id)
                             }
                             className={`w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border transition-all duration-200 uppercase tracking-wider text-[10px] cursor-pointer ${
                               isTooltipOpen
@@ -272,7 +274,9 @@ function ProjectPage() {
                                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                                   SELECT_REPOSITORY
                                 </span>
-                                <span className="text-[8px] text-gray-500">GIT_NODE</span>
+                                <span className="text-[8px] text-gray-500">
+                                  GIT_NODE
+                                </span>
                               </div>
 
                               <div className="space-y-1">
@@ -286,12 +290,17 @@ function ProjectPage() {
                                     className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 hover:bg-cyan-500/15 border border-white/5 hover:border-cyan-500/40 text-gray-200 hover:text-cyan-300 transition-all text-[10px] group/item cursor-pointer"
                                   >
                                     <div className="flex items-center gap-2">
-                                      <Code2 size={13} className="text-cyan-400 shrink-0" />
+                                      <Code2
+                                        size={13}
+                                        className="text-cyan-400 shrink-0"
+                                      />
                                       <div className="text-left">
                                         <div className="font-bold text-white group-hover/item:text-cyan-300">
                                           Frontend Repo
                                         </div>
-                                        <div className="text-[8px] text-gray-400">Client / UI</div>
+                                        <div className="text-[8px] text-gray-400">
+                                          Client / UI
+                                        </div>
                                       </div>
                                     </div>
                                     <ExternalLink
@@ -301,7 +310,10 @@ function ProjectPage() {
                                   </a>
                                 ) : (
                                   <div className="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02] text-gray-500 text-[9px]">
-                                    <Code2 size={12} className="text-gray-600" />
+                                    <Code2
+                                      size={12}
+                                      className="text-gray-600"
+                                    />
                                     <span>Frontend: Private</span>
                                   </div>
                                 )}
@@ -316,12 +328,17 @@ function ProjectPage() {
                                     className="flex items-center justify-between gap-2 p-2 rounded-lg bg-white/5 hover:bg-purple-500/15 border border-white/5 hover:border-purple-500/40 text-gray-200 hover:text-purple-300 transition-all text-[10px] group/item cursor-pointer"
                                   >
                                     <div className="flex items-center gap-2">
-                                      <Server size={13} className="text-purple-400 shrink-0" />
+                                      <Server
+                                        size={13}
+                                        className="text-purple-400 shrink-0"
+                                      />
                                       <div className="text-left">
                                         <div className="font-bold text-white group-hover/item:text-purple-300">
                                           Backend Repo
                                         </div>
-                                        <div className="text-[8px] text-gray-400">Server / API</div>
+                                        <div className="text-[8px] text-gray-400">
+                                          Server / API
+                                        </div>
                                       </div>
                                     </div>
                                     <ExternalLink
@@ -331,7 +348,10 @@ function ProjectPage() {
                                   </a>
                                 ) : (
                                   <div className="flex items-center gap-2 p-2 rounded-lg bg-white/[0.02] text-gray-500 text-[9px]">
-                                    <Server size={12} className="text-gray-600" />
+                                    <Server
+                                      size={12}
+                                      className="text-gray-600"
+                                    />
                                     <span>Backend: Monorepo / Cloud</span>
                                   </div>
                                 )}

@@ -93,4 +93,7 @@ export type IProject = IPost;
 export type ICreateProjectPayload = ICreatePostPayload;
 export type IUpdateProjectPayload = IUpdatePostPayload;
 
+export * from './assistant';
+
+
 

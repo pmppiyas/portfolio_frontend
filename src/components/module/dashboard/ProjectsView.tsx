@@ -360,7 +360,7 @@ export default function ProjectsView() {
       {/* GRID CARDS VIEW */}
       {!isLoading && viewMode === 'grid' && filteredProjects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredProjects.map((project) => (
+          {filteredProjects.map((project, idx) => (
             <Card
               key={project.id}
               className="relative overflow-hidden bg-gray-950/80 border-white/10 hover:border-cyan-500/50 rounded-2xl transition-all duration-300 hover:-translate-y-1 shadow-xl flex flex-col group"
@@ -371,6 +371,8 @@ export default function ProjectsView() {
                   src={project.thumbnail}
                   alt={project.title}
                   fill
+                  priority={idx < 2}
+                  loading={idx < 2 ? 'eager' : 'lazy'}
                   sizes="(max-width: 768px) 100vw, 400px"
                   className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
