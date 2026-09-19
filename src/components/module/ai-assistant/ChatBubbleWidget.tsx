@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { askKnowledgeBase, STARTER_PROMPTS } from '@/services/ai-assistant.service';
 import { IChatMessage, IAiSourceItem } from '@/types/assistant';
+import { MarkdownMessage } from './MarkdownMessage';
 
 export default function ChatBubbleWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -206,9 +207,10 @@ export default function ChatBubbleWidget() {
                     }`}
                   >
                     {/* Content */}
-                    <div className="whitespace-pre-wrap leading-relaxed break-words font-sans">
-                      {msg.content}
-                    </div>
+                    <MarkdownMessage
+                      content={msg.content}
+                      isUser={msg.role === 'user'}
+                    />
 
                     {/* Footer Actions */}
                     {msg.role === 'assistant' && (

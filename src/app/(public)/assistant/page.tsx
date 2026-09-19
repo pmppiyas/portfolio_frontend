@@ -18,30 +18,31 @@ import {
 } from 'lucide-react';
 import { askKnowledgeBase } from '@/services/ai-assistant.service';
 import { IChatMessage } from '@/types/assistant';
+import { MarkdownMessage } from '@/components/module/ai-assistant/MarkdownMessage';
 
 const READY_QUESTIONS = [
   {
     title: 'Core Skills & Stack',
     desc: 'TypeScript, Next.js, NestJS, Prisma & System Architecture',
-    prompt: "What are Prince Mahmud Piyas's primary technical skills, backend proficiencies, and architecture stack?",
+    prompt: 'What are your primary technical skills, backend proficiencies, and architecture stack?',
     icon: Cpu,
   },
   {
     title: 'RAG & AI Engineering',
     desc: 'Pinecone vector database, embeddings, and LangChain pipelines',
-    prompt: 'How does his Personal Knowledge Base RAG system work with Pinecone and GitHub repositories?',
+    prompt: 'How does your Personal Knowledge Base RAG system work with Pinecone and GitHub repositories?',
     icon: Sparkles,
   },
   {
     title: 'Featured Projects',
     desc: 'Production applications, developer tools, and microservices',
-    prompt: 'What are the top production-grade systems and open-source tools Piyas has built?',
+    prompt: 'What are the top production-grade systems and tools you have built?',
     icon: Layers,
   },
   {
     title: 'Hire & Collaborate',
     desc: 'Availability for contracts, engineering roles, and contact channels',
-    prompt: 'How can I hire or get in touch with Prince Mahmud Piyas for collaboration?',
+    prompt: 'How can I hire or get in touch with you for collaboration?',
     icon: Mail,
   },
 ];
@@ -209,9 +210,10 @@ export default function AssistantPage() {
                       : 'bg-neutral-900/90 border border-neutral-800 text-neutral-200 rounded-bl-none shadow-sm'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap leading-relaxed break-words font-sans text-xs sm:text-sm">
-                    {msg.content}
-                  </div>
+                  <MarkdownMessage
+                    content={msg.content}
+                    isUser={msg.role === 'user'}
+                  />
 
                   {msg.role === 'assistant' && (
                     <div className="flex items-center justify-between mt-2.5 pt-2 border-t border-neutral-800/40 text-[10px] text-neutral-500">

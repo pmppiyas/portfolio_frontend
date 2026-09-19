@@ -3,19 +3,19 @@ import { IAskResponse } from '@/types/assistant';
 export const STARTER_PROMPTS = [
   {
     label: 'Core Skills & Tech Stack',
-    question: "What are Prince Mahmud Piyas's core technical skills and stack?",
+    question: 'What are your core technical skills and stack?',
   },
   {
     label: 'RAG & AI Architecture',
-    question: 'How does his Personal Knowledge Base RAG system work with Pinecone and GitHub?',
+    question: 'How does your Personal Knowledge Base RAG system work with Pinecone and GitHub?',
   },
   {
     label: 'Featured Projects',
-    question: 'What are the most notable production projects Piyas has built?',
+    question: 'What are the most notable production projects you have built?',
   },
   {
     label: 'Contact & Collaboration',
-    question: 'How can I hire or collaborate with Prince Mahmud Piyas?',
+    question: 'How can I hire or collaborate with you?',
   },
 ];
 
