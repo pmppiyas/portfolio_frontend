@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const maxDuration = 60; // Allow up to 60 seconds on Vercel Serverless
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const question = searchParams.get('question');
@@ -36,11 +39,12 @@ export async function POST(request: NextRequest) {
 }
 
 async function handleAsk(question: string) {
-  const aiServiceUrl =
+  const rawUrl =
     process.env.AI_ASSISTANT_URL ||
-    (process.env.NEXT_PUBLIC_AI_ASSISTANT_URL as string);
+    process.env.NEXT_PUBLIC_AI_ASSISTANT_URL ||
+    'https://ai-knowledge-based-assistant.onrender.com';
 
-  const cleanUrl = aiServiceUrl.replace(/\/+$/, '');
+  const cleanUrl = rawUrl.replace(/\/+$/, '');
   const targetEndpoint = `${cleanUrl}/ai/ask?question=${encodeURIComponent(question)}`;
 
   try {

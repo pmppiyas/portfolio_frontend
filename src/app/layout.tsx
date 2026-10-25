@@ -41,7 +41,7 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://pmppiyas.vercel.app'),
+  metadataBase: new URL('https://www.pmppiyas.dev'),
   title: {
     default: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
     template: '%s | Prince Mahmud Piyas',
@@ -67,6 +67,10 @@ export const metadata: Metadata = {
     { name: 'Prince Mahmud Piyas', url: 'https://github.com/pmppiyas' },
   ],
   creator: 'Prince Mahmud Piyas',
+  publisher: 'Prince Mahmud Piyas',
+  alternates: {
+    canonical: 'https://www.pmppiyas.dev',
+  },
   icons: {
     icon: [{ url: '/favicon.ico?v=piyas2', sizes: 'any' }],
     shortcut: '/favicon.ico?v=piyas2',
@@ -75,7 +79,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://pmppiyas.vercel.app',
+    url: 'https://www.pmppiyas.dev',
     siteName: 'Prince Mahmud Piyas - Engineering Portfolio',
     title: 'Prince Mahmud Piyas | Full-Stack AI Engineer & Systems Architect',
     description:
@@ -95,6 +99,7 @@ export const metadata: Metadata = {
     description:
       'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
     creator: '@pmppiyas',
+    site: '@pmppiyas',
     images: ['/og-image.png'],
   },
   robots: {
@@ -110,6 +115,49 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLdPerson = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Prince Mahmud Piyas',
+  alternateName: ['PMP Piyas', 'Prince Mahmud', 'pmppiyas'],
+  jobTitle: 'Full-Stack AI Engineer & Distributed Systems Architect',
+  url: 'https://www.pmppiyas.dev',
+  image: 'https://www.pmppiyas.dev/og-image.png',
+  sameAs: [
+    'https://github.com/pmppiyas',
+    'https://linkedin.com/in/pmppiyas',
+    'https://twitter.com/pmppiyas',
+  ],
+  knowsAbout: [
+    'Full-Stack Development',
+    'AI Engineering',
+    'Distributed Systems',
+    'Next.js',
+    'React',
+    'TypeScript',
+    'Node.js',
+    'NestJS',
+    'PostgreSQL',
+    'Prisma ORM',
+    'LangChain',
+    'Vector Databases',
+    'RAG Systems',
+  ],
+};
+
+const jsonLdWebSite = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Prince Mahmud Piyas - Engineering Portfolio',
+  url: 'https://www.pmppiyas.dev',
+  author: {
+    '@type': 'Person',
+    name: 'Prince Mahmud Piyas',
+  },
+  description:
+    'Full-Stack AI Engineer & Distributed Systems Architect building intelligent, scalable digital solutions.',
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -117,6 +165,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark" data-scroll-behavior="smooth">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdPerson) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+        />
+      </head>
       <body
         className={`${roboto.variable} ${kanit.variable} ${orbitron.variable} antialiased bg-background text-foreground min-h-screen `}
       >

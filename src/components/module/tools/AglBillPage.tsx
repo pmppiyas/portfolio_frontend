@@ -19,10 +19,15 @@ interface BillData {
   isInsideDhaka: boolean;
 }
 
+const toBengaliNumber = (num: number | string): string => {
+  const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+  return String(num).replace(/[0-9]/g, (digit) => bengaliDigits[Number(digit)]);
+};
+
 export default function AglBillPage() {
   const [price, setPrice] = useState<number | ''>('');
   const [advance, setAdvance] = useState<number | ''>(300);
-  const [delivery, setDelivery] = useState<number | ''>(105);
+  const [delivery, setDelivery] = useState<number | ''>(100);
   const [isInsideDhaka, setIsInsideDhaka] = useState(false);
   const [bill, setBill] = useState<BillData | null>(null);
   const [copied, setCopied] = useState(false);
@@ -32,7 +37,7 @@ export default function AglBillPage() {
     if (inside) {
       if (
         delivery === '' ||
-        delivery === 105 ||
+        delivery === 100 ||
         delivery === 120 ||
         delivery === 85
       ) {
@@ -40,7 +45,7 @@ export default function AglBillPage() {
       }
     } else {
       if (delivery === '' || delivery === 60 || delivery === 80) {
-        setDelivery(105);
+        setDelivery(100);
       }
     }
   };
@@ -50,10 +55,10 @@ export default function AglBillPage() {
     const a = Number(advance) || 0;
     const d = Number(delivery) || 0;
 
-    const bakiForCondition = Math.max(0, p - a);
+    const totalDueBeforeCondition = Math.max(0, p + d - a);
     const conditionCharge = isInsideDhaka
       ? 0
-      : Math.round(bakiForCondition * 0.01);
+      : Math.round(totalDueBeforeCondition * 0.01);
 
     const total = p + d + conditionCharge;
     const totalDue = total - a;
@@ -75,14 +80,15 @@ export default function AglBillPage() {
     if (!bill) return;
 
     const lines = [
-      `পণ্যের দাম (Product Price): ${bill.price} টাকা`,
+      `পণ্যের দাম: ${toBengaliNumber(bill.price)} টাকা`,
       ...(!bill.isInsideDhaka
-        ? [`কন্ডিশন চার্জ (Condition Charge): ${bill.conditionCharge} টাকা`]
+        ? [`কন্ডিশন চার্জ: ${toBengaliNumber(bill.conditionCharge)} টাকা`]
         : []),
-      `ডেলিভারি চার্জ (Delivery Charge): ${bill.deliveryCharge} টাকা`,
-      `সর্বমোট খরচ (Total): ${bill.total} টাকা`,
-      `অগ্রিম প্রদান (Advance): - ${bill.advance} টাকা`,
-      `প্রাপ্য/বকেয়া টাকা (Total Due): (${bill.total} - ${bill.advance}) = ${bill.totalDue} টাকা`,
+      `ডেলিভারি চার্জ: ${toBengaliNumber(bill.deliveryCharge)} টাকা`,
+      '---------------------------',
+      `সর্বমোট খরচ: ${toBengaliNumber(bill.total)} টাকা`,
+      `অগ্রিম প্রদান: - ${toBengaliNumber(bill.advance)} টাকা`,
+      `বকেয়া টাকা: (${toBengaliNumber(bill.total)} - ${toBengaliNumber(bill.advance)}) = ${toBengaliNumber(bill.totalDue)} টাকা`,
     ];
 
     navigator.clipboard.writeText(lines.join('\n'));
@@ -94,7 +100,7 @@ export default function AglBillPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full pt-20 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-black text-white">
+    <div className="relative w-full min-h-screen pt-13 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-black text-white">
       {/* Background Cyber Ambient */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div
@@ -115,9 +121,9 @@ export default function AglBillPage() {
 
       <div className="max-w-4xl mx-auto space-y-6">
         <CustomHeading
-          heading="Bill Helper"
-          badge="AUTOMATION // AGL_PARSER"
-          subtitle="Automated Invoice Calculation & Bengali Slip Copy Generator"
+          heading="AGL Bill Helper"
+          badge="AUTOMATION // AGL_BILL_CALCULATOR"
+          subtitle="AGL Bill Calculator & Instant Parcel Delivery Slip Generator"
         />
 
         {/* 2 Column Layout */}
@@ -200,7 +206,7 @@ export default function AglBillPage() {
                     অগ্রিম প্রদান (Advance)
                   </Label>
                   <div className="flex gap-1 font-mono text-[10px] flex-wrap justify-end">
-                    {[250, 300, 500, 1000, 2000].map((val) => (
+                    {[300, 500, 1000, 2000].map((val) => (
                       <button
                         key={val}
                         type="button"
@@ -234,7 +240,7 @@ export default function AglBillPage() {
                     ডেলিভারি চার্জ (Delivery Charge)
                   </Label>
                   <div className="flex gap-1 font-mono text-[10px] flex-wrap justify-end">
-                    {[60, 80, 85, 105, 120].map((val) => (
+                    {[60, 80, 100, 120].map((val) => (
                       <button
                         key={val}
                         type="button"
@@ -253,7 +259,7 @@ export default function AglBillPage() {
                 <Input
                   id="delivery"
                   type="number"
-                  placeholder={isInsideDhaka ? '60' : '105'}
+                  placeholder={isInsideDhaka ? '60' : '100'}
                   value={delivery}
                   onChange={(e) =>
                     setDelivery(e.target.value ? Number(e.target.value) : '')
@@ -321,61 +327,57 @@ export default function AglBillPage() {
               {bill ? (
                 <div className="mt-4 space-y-3 font-mono text-xs md:text-sm">
                   <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-gray-400">লোকেশন (Location):</span>
-                    <span className="font-bold text-cyan-400">
-                      {bill.isInsideDhaka
-                        ? 'ঢাকার ভেতরে (Inside Dhaka)'
-                        : 'ঢাকার বাইরে (Outside Dhaka)'}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-gray-400">
-                      পণ্যের দাম (Product Price):
-                    </span>
+                    <span className="text-gray-400">পণ্যের দাম:</span>
                     <span className="font-semibold text-white">
-                      {bill.price} ৳
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-gray-400">
-                      অগ্রিম প্রদান (Advance):
-                    </span>
-                    <span className="font-semibold text-red-400">
-                      - {bill.advance} ৳
+                      {toBengaliNumber(bill.price)} টাকা
                     </span>
                   </div>
 
                   {/* Condition charge is ONLY displayed if outside Dhaka */}
                   {!bill.isInsideDhaka && (
                     <div className="flex justify-between items-center py-1 border-b border-white/5">
-                      <span className="text-gray-400">
-                        কন্ডিশন চার্জ (Condition Charge):
-                      </span>
+                      <span className="text-gray-400">কন্ডিশন চার্জ:</span>
                       <span className="font-semibold text-yellow-300">
-                        {bill.conditionCharge} ৳
+                        {toBengaliNumber(bill.conditionCharge)} টাকা
                       </span>
                     </div>
                   )}
 
                   <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-gray-400">
-                      ডেলিভারি চার্জ (Delivery Charge):
-                    </span>
+                    <span className="text-gray-400">ডেলিভারি চার্জ:</span>
                     <span className="font-semibold text-white">
-                      {bill.deliveryCharge} ৳
+                      {toBengaliNumber(bill.deliveryCharge)} টাকা
                     </span>
                   </div>
 
-                  <div className="flex justify-between items-center py-2 text-sm font-bold text-gray-200">
-                    <span>সর্বমোট খরচ (Total):</span>
-                    <span className="text-cyan-300">{bill.total} ৳</span>
+                  {/* সেপারেটর লাইন */}
+                  <div className="py-0.5 text-gray-500 font-mono text-center tracking-widest select-none">
+                    ---------------------------
                   </div>
 
-                  <div className="flex justify-between items-center text-base font-black text-cyan-300 mt-3 bg-cyan-500/10 p-3.5 rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
-                    <span>প্রাপ্য/বকেয়া (Total Due):</span>
-                    <span className="text-lg">{bill.totalDue} ৳</span>
+                  <div className="flex justify-between items-center py-1 border-b border-white/5">
+                    <span className="text-gray-200 font-bold">
+                      সর্বমোট খরচ:
+                    </span>
+                    <span className="font-bold text-cyan-300">
+                      {toBengaliNumber(bill.total)} টাকা
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between items-center py-1 border-b border-white/5">
+                    <span className="text-gray-400">অগ্রিম প্রদান:</span>
+                    <span className="font-semibold text-red-400">
+                      - {toBengaliNumber(bill.advance)} টাকা
+                    </span>
+                  </div>
+
+                  <div className="mt-3 bg-cyan-500/10 p-3.5 rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(34,211,238,0.15)] space-y-1">
+                    <div className="flex justify-between items-center text-sm md:text-base font-black text-cyan-300">
+                      <span>বকেয়া টাকা:</span>
+                      <span className="text-base md:text-lg font-bold">
+                        {toBengaliNumber(bill.totalDue)} টাকা
+                      </span>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -393,10 +395,77 @@ export default function AglBillPage() {
             </div>
 
             {bill && (
-              <div className="mt-4 pt-3 border-t border-white/10 font-mono text-[10px] text-gray-500 text-center">
-                <span>// READY_TO_PASTE_INTO_CHAT</span>
+              <div
+                onClick={handleCopy}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    handleCopy();
+                  }
+                }}
+                className={`mt-4 py-2.5 px-3 border rounded-xl font-mono text-[11px] text-center cursor-pointer transition-all duration-200 select-none flex items-center justify-center gap-2 ${
+                  copied
+                    ? 'bg-green-500/15 text-green-400 border-green-500/40 shadow-[0_0_12px_rgba(74,222,128,0.15)]'
+                    : 'bg-white/2 text-gray-400 border-white/10 hover:text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-500/30 hover:shadow-[0_0_12px_rgba(34,211,238,0.1)]'
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check size={13} className="text-green-400" />
+                    <span className="font-semibold tracking-wider">
+                      // COPIED! চ্যাটে পেস্ট করতে প্রস্তুত
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Copy size={13} className="opacity-70" />
+                    <span>// READY_TO_PASTE_INTO_CHAT </span>
+                  </>
+                )}
               </div>
             )}
+          </div>
+        </div>
+
+        {/* SEO Guide & Documentation Section */}
+        <div className="pt-6 border-t border-white/10 space-y-4 font-mono text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300">
+            <div className="p-4 rounded-xl bg-gray-950/60 border border-white/10 space-y-1.5">
+              <span className="text-[11px] font-bold text-cyan-400 block">
+                ⚡ AGL Bill Helper কি?
+              </span>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                AGL Bill Helper হলো একটি দ্রুতগতির অনলাইন বিল ক্যালকুলেটর, যা
+                দিয়ে ই-কমার্স ও কুরিয়ার পার্সেল ডেলিভারি ইনভয়েসের মোট খরচ,
+                কন্ডিশন চার্জ ও বকেয়া হিসাব করে ১-ক্লিকে বাংলায় কাস্টমার স্লিপ
+                তৈরি করা যায়।
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-gray-950/60 border border-white/10 space-y-1.5">
+              <span className="text-[11px] font-bold text-cyan-400 block">
+                🧮 কন্ডিশন চার্জের হিসাব নিয়ম
+              </span>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                ঢাকার ভেতরে কন্ডিশন চার্জ ০%। ঢাকার বাইরে ডেলিভারি চার্জসহ মোট
+                বকেয়া টাকার ওপর ১% কন্ডিশন চার্জ প্রযোজ্য হয়:{' '}
+                <code className="text-cyan-300">
+                  কন্ডিশন = (দাম + ডেলিভারি - অগ্রিম) × ১%
+                </code>
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-gray-950/60 border border-white/10 space-y-1.5">
+              <span className="text-[11px] font-bold text-cyan-400 block">
+                📋 ইনস্ট্যান্ট কপি স্লিপ
+              </span>
+              <p className="text-[11px] text-gray-400 leading-relaxed">
+                জেনারেট করার পর <strong>COPY SLIP</strong> বাটনে ক্লিক করলেই
+                সম্পূর্ণ হিসাব ফেসবুক মেসেঞ্জার, হোয়াটসঅ্যাপ বা গ্রাহকের চ্যাটে
+                পেস্ট করার জন্য ক্লিপবোর্ডে কপি হয়ে যায়।
+              </p>
+            </div>
           </div>
         </div>
       </div>

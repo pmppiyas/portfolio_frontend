@@ -69,7 +69,7 @@ const tools: ITool[] = [
 
 export default function ToolsPage() {
   return (
-    <div className="relative min-h-screen w-full pt-20 sm:pt-24 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-black text-white">
+    <div className="relative w-full min-h-screen pt-13 pb-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-black text-white">
       {/* Background Cyber Ambient & Tech Grid */}
       <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
         <div

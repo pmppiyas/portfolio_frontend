@@ -158,7 +158,7 @@ export default function ShapeGeneratorPage() {
       }}
     >
       <div
-        style={{ margin: '0 auto', padding: '64px 20px' }}
+        style={{ margin: '0 auto', padding: '36px 20px 64px 20px' }}
         className="flex flex-col"
       >
         {/* Header */}
