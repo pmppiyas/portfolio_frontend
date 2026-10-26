@@ -126,8 +126,8 @@ function ProjectPage() {
               <div
                 key={work.id}
                 className={`group relative flex flex-col justify-between rounded-xl bg-gray-950/80 border border-cyan-500/20 hover:border-cyan-400/60 shadow-lg hover:shadow-[0_0_25px_rgba(34,211,238,0.18)] transition-all duration-300 hover:-translate-y-1 overflow-visible fade-in-up ${
-                  inView ? 'visible' : ''
-                }`}
+                  isTooltipOpen ? 'z-50' : 'z-10 hover:z-20'
+                } ${inView ? 'visible' : ''}`}
                 style={{ animationDelay: `${idx * 0.08}s` }}
               >
                 {/* Cyber Corner Markers */}
@@ -239,7 +239,10 @@ function ProjectPage() {
                     )}
 
                     {/* Source Code Trigger with Cyber Tooltip */}
-                    <div className="relative" data-source-tooltip>
+                    <div
+                      className={`relative ${isTooltipOpen ? 'z-50' : ''}`}
+                      data-source-tooltip
+                    >
                       {hasSource ? (
                         <>
                           <button
@@ -267,7 +270,12 @@ function ProjectPage() {
 
                           {/* Mini Cyber Tooltip Popover */}
                           {isTooltipOpen && (
-                            <div className="absolute bottom-full mb-2.5 right-0 sm:left-0 sm:right-auto z-50 w-56 p-2 bg-gray-950/95 border border-cyan-500/50 rounded-xl shadow-[0_0_30px_rgba(6,182,212,0.35)] backdrop-blur-2xl animate-in fade-in zoom-in-95 duration-150 font-mono text-left">
+                            <div
+                              className="absolute bottom-full mb-2.5 right-0 z-50 w-60 p-2.5 border border-cyan-500/60 rounded-xl shadow-[0_15px_35px_rgba(0,0,0,0.95),0_0_25px_rgba(6,182,212,0.35)] animate-in fade-in zoom-in-95 duration-150 font-mono text-left"
+                              style={{
+                                backgroundColor: '#070b14',
+                              }}
+                            >
                               {/* Tooltip Header */}
                               <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/10 text-[9px]">
                                 <span className="text-cyan-400 font-bold tracking-wider flex items-center gap-1">
@@ -358,7 +366,12 @@ function ProjectPage() {
                               </div>
 
                               {/* Tooltip Pointer Arrow */}
-                              <div className="absolute -bottom-1.5 left-6 w-3 h-3 bg-gray-950 border-r border-b border-cyan-500/50 rotate-45 pointer-events-none" />
+                              <div
+                                className="absolute -bottom-1.5 right-16 w-3 h-3 border-r border-b border-cyan-500/60 rotate-45 pointer-events-none"
+                                style={{
+                                  backgroundColor: '#070b14',
+                                }}
+                              />
                             </div>
                           )}
                         </>
